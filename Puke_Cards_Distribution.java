@@ -1,5 +1,3 @@
-package Puke_Cards_Distribution;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
