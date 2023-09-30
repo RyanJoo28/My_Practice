@@ -163,6 +163,8 @@ public class AVLTree {
     static List<Integer> inOrderTraversal(TreeNode node) {
         List<Integer> elements = new ArrayList<>();
         if (node != null) {
+            elements.addAll(inOrderTraversal(node.left));
+            elements.add(node.val);
             elements.addAll(inOrderTraversal(node.right));
         }
         return elements;
