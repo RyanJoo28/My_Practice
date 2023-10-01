@@ -55,11 +55,22 @@ public class Heap {
 
         System.out.println();
 
-        Queue<Integer> queue = new LinkedList<>(Arrays.asList(3, 2, 1, 7, 6, 5, 4));
+        Queue<Integer> queue = new PriorityQueue<>((o1, o2) -> o2 - o1);
+        queue.addAll(Arrays.asList(3, 2, 1, 7, 6, 5, 4));
         MyHeap myHeap = new MyHeap();
         for (int i = 0; i < 7; i++) {
-            System.out.print(myHeap.peek(queue) + " ");
+            System.out.print(myHeap.peek(queue) + " "); /* 7 for 7 times */
         }
+
+        System.out.println();
+
+        int[] arr = {4, 10, 3, 5, 1, 9, 2};
+        Queue<Integer> maxHeap1 = myHeap.buildMaxHeap1(arr);
+        Queue<Integer> maxHeap2 = myHeap.buildMaxHeap2(arr);
+        Integer peek1 = maxHeap1.peek();
+        Integer peek2 = maxHeap2.peek();
+        System.out.println(peek1); /* 4 */
+        System.out.println(peek2); /* 10 */
     }
 }
 
@@ -84,60 +95,72 @@ class MyHeap {
         return topHeap.peek();
     }
 
-    /* 元素入堆 */
-    void push(int val, Queue<Integer> topHeap) {
-        // 添加节点
-        topHeap.add(val);
-        // 从底至顶堆化
-        siftUp(size() - 1);
+    /* 从一个数组建立最大堆 */
+    Queue<Integer> buildMaxHeap1(int[] arr) {
+        Queue<Integer> maxHeap = new LinkedList<>();
+        for (int num : arr) {
+            maxHeap.add(num);
+            siftUp(maxHeap.size() - 1, maxHeap);
+        }
+        return maxHeap;
     }
 
     /* 从节点 i 开始，从底至顶堆化 */
     void siftUp(int i, Queue<Integer> topHeap) {
-        while (true) {
-            // 获取节点 i 的父节点
-            int p = parent(i);
-            // 当“越过根节点”或“节点无须修复”时，结束堆化
-            if (p < 0 || topHeap.get(i) <= topHeap.get(p))
+        while (i > 0) {
+            int parent = (i - 1) / 2;
+            if (topHeap.peek() <= topHeap.toArray(new Integer[0])[parent]) {
                 break;
-            // 交换两节点
-            swap(i, p);
-            // 循环向上堆化
-            i = p;
+            }
+            swap(i, parent, topHeap);
+            i = parent;
         }
     }
 
-    /* 元素出堆 */
-    int pop() {
-        // 判空处理
-        if (isEmpty())
-            throw new IndexOutOfBoundsException();
-        // 交换根节点与最右叶节点（即交换首元素与尾元素）
-        swap(0, size() - 1);
-        // 删除节点
-        int val = maxHeap.remove(size() - 1);
-        // 从顶至底堆化
-        siftDown(0);
-        // 返回堆顶元素
-        return val;
+    /* 从一个数组建立最大堆 */
+    Queue<Integer> buildMaxHeap2(int[] arr) {
+        Queue<Integer> maxHeap = new LinkedList<>();
+        for (int num : arr) {
+            maxHeap.add(num);
+        }
+        for (int i = arr.length / 2 - 1; i >= 0; i--) {
+            siftDown(i, maxHeap);
+        }
+        return maxHeap;
     }
 
     /* 从节点 i 开始，从顶至底堆化 */
-    void siftDown(int i) {
+    void siftDown(int i, Queue<Integer> topHeap) {
+        int heapSize = topHeap.size();
         while (true) {
-            // 判断节点 i, l, r 中值最大的节点，记为 ma
-            int l = left(i), r = right(i), ma = i;
-            if (l < size() && maxHeap.get(l) > maxHeap.get(ma))
-                ma = l;
-            if (r < size() && maxHeap.get(r) > maxHeap.get(ma))
-                ma = r;
-            // 若节点 i 最大或索引 l, r 越界，则无须继续堆化，跳出
-            if (ma == i)
+            int maxIndex = i;
+            int leftChild = 2 * i + 1;
+            int rightChild = 2 * i + 2;
+
+            if (leftChild < heapSize && topHeap.toArray(new Integer[0])[leftChild] > topHeap.toArray(new Integer[0])[maxIndex]) {
+                maxIndex = leftChild;
+            }
+
+            if (rightChild < heapSize && topHeap.toArray(new Integer[0])[rightChild] > topHeap.toArray(new Integer[0])[maxIndex]) {
+                maxIndex = rightChild;
+            }
+
+            if (maxIndex == i) {
                 break;
-            // 交换两节点
-            swap(i, ma);
-            // 循环向下堆化
-            i = ma;
+            }
+
+            swap(i, maxIndex, topHeap);
+            i = maxIndex;
         }
+    }
+
+    /* 交换堆中的两个元素 */
+    void swap(int i, int j, Queue<Integer> topHeap) {
+        Integer[] arr = topHeap.toArray(new Integer[0]);
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+        topHeap.clear();
+        topHeap.addAll(Arrays.asList(arr));
     }
 }
