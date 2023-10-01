@@ -71,6 +71,13 @@ public class Heap {
         Integer peek2 = maxHeap2.peek();
         System.out.println(peek1); /* 4 */
         System.out.println(peek2); /* 10 */
+        for (Integer heap : maxHeap1) {
+            System.out.print(heap + " ");
+        }
+        System.out.println();
+        for (Integer heap : maxHeap2) {
+            System.out.print(heap + " ");
+        }
     }
 }
 
