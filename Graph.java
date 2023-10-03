@@ -4,8 +4,51 @@ import java.util.*;
 
 public class Graph {
     public static void main(String[] args) {
+        int[] vertices = {0, 1, 2, 3};
+        int[][] edges1 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
+        GraphAdjMat graphAdjMat = new GraphAdjMat(vertices, edges1);
+        graphAdjMat.print();
 
+        Vertex[][] edges2 = {{new Vertex(0), new Vertex(1)}, {new Vertex(1), new Vertex(2)}, {new Vertex(2), new Vertex(3)}, {new Vertex(3), new Vertex(0)}};
+        GraphAdjList graphAdjList = new GraphAdjList(edges2);
+        graphAdjList.print();
+
+        // Create an instance of GraphAdjList
+        GraphAdjList graph = createGraph();
+
+        // Define the starting vertex
+        Vertex startVertex = new Vertex(0);
+
+        // Add the starting vertex to the graph (if it's not already in the adjacency list)
+        graph.addVertex(startVertex);
+
+        // Create an instance of GraphBFS
+        GraphBFS bfs = new GraphBFS();
+
+        // Call the graphBFS method with the graph and starting vertex as parameters
+        List<Vertex> traversalResult = bfs.graphBFS(graph, startVertex);
+
+        // Print the traversal result
+        System.out.println("BFS Traversal:");
+        for (Vertex vertex : traversalResult) {
+            System.out.print(vertex.val + " ");
+        }
     }
+
+    // Helper method to create a sample graph
+    private static GraphAdjList createGraph() {
+        Vertex[] vertices = {new Vertex(0), new Vertex(1), new Vertex(2), new Vertex(3)};
+        Vertex[][] edges = {
+                {vertices[0], vertices[1]},
+                {vertices[1], vertices[2]},
+                {vertices[2], vertices[3]},
+                {vertices[3], vertices[0]}
+        };
+
+        return new GraphAdjList(edges);
+    }
+    
+    
 }
 
 class GraphAdjMat {
@@ -203,6 +246,32 @@ class GraphBFS {
             }
         }
         // 返回顶点遍历序列
+        return res;
+    }
+}
+
+class GraphDFS {
+    /* 深度优先遍历 DFS 辅助函数 */
+    void dfs(GraphAdjList graph, Set<Vertex> visited, List<Vertex> res, Vertex vet) {
+        res.add(vet);     // 记录访问顶点
+        visited.add(vet); // 标记该顶点已被访问
+        // 遍历该顶点的所有邻接顶点
+        for (Vertex adjVet : graph.adjList.get(vet)) {
+            if (visited.contains(adjVet))
+                continue; // 跳过已被访问过的顶点
+            // 递归访问邻接顶点
+            dfs(graph, visited, res, adjVet);
+        }
+    }
+
+    /* 深度优先遍历 DFS */
+// 使用邻接表来表示图，以便获取指定顶点的所有邻接顶点
+    List<Vertex> graphDFS(GraphAdjList graph, Vertex startVet) {
+        // 顶点遍历序列
+        List<Vertex> res = new ArrayList<>();
+        // 哈希表，用于记录已被访问过的顶点
+        Set<Vertex> visited = new HashSet<>();
+        dfs(graph, visited, res, startVet);
         return res;
     }
 }
