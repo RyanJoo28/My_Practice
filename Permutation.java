@@ -13,6 +13,8 @@ public class Permutation {
         backtrackIDisplay(backtrackI);
         System.out.println();
         backtrackIIDisplay(backtrackII);
+
+        return; // exit the main method
     }
 
     private static void backtrackIIDisplay(BacktrackII backtrackII) {
